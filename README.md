@@ -9,5 +9,6 @@ spaghetti code inside
 ...i put too much effort into this
 
 todo
-- [ ] make mass drivers actually match width
-- [ ] make item draw over top
+- [x] make mass drivers actually match width
+- [x] make item draw over top
+- [ ] fix oddities

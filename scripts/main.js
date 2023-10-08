@@ -57,8 +57,9 @@ Blocks.massDriver.buildType = () => extend(MassDriver.MassDriverBuild, Blocks.ma
                 }
                 totalAmount += items;
             }
+            let item = Vars.content.item(greatest);
             Draw.xscl = Draw.yscl = 1.5 * Math.min(totalAmount / this.block.minDistribute, 1) * (Math.log(totalAmount / (this.block.itemCapacity - this.block.minDistribute)) / 5 + 1);
-            Draw.rect(Vars.content.item(greatest).fullIcon, Tmp.v1.x, Tmp.v1.y, e.rotation);
+            Draw.rect(item.fullIcon, Tmp.v1.x, Tmp.v1.y, e.rotation);
             Draw.xscl = Draw.yscl = 0;
         }, {});
         effect.layer = Layer.flyingUnitLow - 1;
@@ -76,17 +77,15 @@ Blocks.massDriver.buildType = () => extend(MassDriver.MassDriverBuild, Blocks.ma
         this.curSize = Mathf.lerpDelta(this.curSize, this.targetSize, 0.05);
         this.targetSize = Math.max(Vars.tilesize * 1, Vars.tilesize * 2 * itemSize)
 
-        let hasLink = this.linkValid();
-        let link = Vars.world.build(this.link);
 
         if(this.items.any()){
             this.targetSize = Mathf.clamp(Vars.tilesize * ((this.items.total() - this.block.minDistribute) / (this.block.itemCapacity - this.block.minDistribute) + 1), Vars.tilesize, Vars.tilesize * 2);
         }
 
-        if (hasLink && this.state == MassDriver.DriverState.accepting) {
+        if (this.state == MassDriver.DriverState.accepting && this.currentShooter() != null) {
             let currentWidth = Mathf.clamp(Vars.tilesize * ((this.items.total() - this.block.minDistribute) / (this.block.itemCapacity - this.block.minDistribute) + 1), Vars.tilesize, Vars.tilesize * 2);
-            let linkWidth = Mathf.clamp(Vars.tilesize * ((link.items.total() - this.block.minDistribute) / (this.block.itemCapacity - this.block.minDistribute) + 1), Vars.tilesize, Vars.tilesize * 2);
-            this.targetSize = this.items.any() ? Math.max(linkWidth, currentWidth) : linkWidth;
+            let shooterWidth = Mathf.clamp(Vars.tilesize * ((this.currentShooter().items.total() - this.block.minDistribute) / (this.block.itemCapacity - this.block.minDistribute) + 1), Vars.tilesize, Vars.tilesize * 2);
+            this.targetSize = this.items.any() ? Math.max(shooterWidth, currentWidth) : shooterWidth;
         }
     },
 
@@ -155,7 +154,7 @@ Blocks.massDriver.buildType = () => extend(MassDriver.MassDriverBuild, Blocks.ma
 
         Draw.z(Layer.blockOver);
         if (this.items.any()) {
-            Draw.z((loadSize == 1 && this.state == MassDriver.DriverState.shooting) ? Layer.blockOver + 0.2 : Layer.blockOver);
+            Draw.z((/*loadSize >= 1 && */ this.state == MassDriver.DriverState.shooting) ? Layer.blockOver + 0.2 : Layer.blockOver);
             let offset = this.state == MassDriver.DriverState.shooting ? Math.min(loadSize, 1) : 0;
             let loadedX = this.state == MassDriver.DriverState.shooting ? tx : this.x;
             let loadedY = this.state == MassDriver.DriverState.shooting ? ty : this.y;
@@ -195,7 +194,7 @@ Blocks.massDriver.buildType = () => extend(MassDriver.MassDriverBuild, Blocks.ma
         if (this.state == MassDriver.DriverState.shooting &&
             hasLink &&
             this.items.total() >= this.block.minDistribute && //must shoot minimum amount of items
-            link.block.itemCapacity - link.items.total() >= this.block.minDistribute && //must have minimum amount of space
+            // link.block.itemCapacity - link.items.total() >= this.block.minDistribute && //must have minimum amount of space
             // link.currentShooter() == this &&
             // link.state == MassDriver.DriverState.accepting &&
             // Angles.near(this.rotation, this.angleTo(link), 2) && Angles.near(link.rotation, this.angleTo(link) + 180, 2) &&
