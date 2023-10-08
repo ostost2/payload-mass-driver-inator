@@ -1,0 +1,11 @@
+name: payload-mass-driver-inator
+displayName: Payload Mass Driver-inator
+author: ostost
+description: '''
+    Turns mass drivers into payload mass drivers
+'''
+
+hidden: true
+version: timeless
+minGameVersion: 146
+repo: ostost2/payload-mass-driver-inator
